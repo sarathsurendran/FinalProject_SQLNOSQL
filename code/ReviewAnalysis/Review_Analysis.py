@@ -13,15 +13,19 @@ import matplotlib.pyplot as plot
 
 from wordcloud import WordCloud
 from elasticsearch import Elasticsearch
+from pandas.io.json import json_normalize
 
+es_host='10.134.175.251'
+es_port=9200
 
 es = Elasticsearch(
-        ['10.134.175.251'],
-        port=9200
+        [es_host],
+        port=es_port
     ) #ES set up - high level
 
 pd.set_option('display.max_columns', None)  # just for printing all columns
 
+#Uses business data to load reviews for the businesses
 def load_review_data_from_business(business_data):
     
     print("Total businesses retrieved ::",len(business_data))
@@ -30,7 +34,7 @@ def load_review_data_from_business(business_data):
         businesses.append(b)
     
     
-#    get review data
+#    get review data for specific business ids
     review_query={
             "query": {
                      "terms" : { "business_id.keyword": businesses}
@@ -40,32 +44,24 @@ def load_review_data_from_business(business_data):
     review_data=get_review_data(query=review_query,size=10000)
     
     print("Total reviews retrieved ::",len(review_data))
-    fields = {}
-    for num,doc in enumerate(review_data):
-        review=doc["_source"]
-        # iterate review data
-        for key, val in review.items():
-            try:
-                fields[key] = np.append(fields[key], val)
-            except KeyError:
-                fields[key] = np.array([val])
-    
-    # create and return df
-    return pd.DataFrame(fields)
 
-def load_business_df(business_data):
-    fields = {}
-    for num,doc in enumerate(business_data):
-        review=doc["_source"]
-        # iterate review data
-        for key, val in review.items():
-            try:
-                fields[key] = np.append(fields[key], val)
-            except KeyError:
-                fields[key] = np.array([val])
-    
+    reviews=[]
+#    Collect source docs
+    for num,doc in enumerate(review_data):
+        reviews.append(doc["_source"])
+      
     # create and return df
-    return pd.DataFrame(fields)
+    return json_normalize(reviews)
+
+#Convert json business data into df
+def load_business_df(business_data):
+
+    businesses=[]
+    for num,doc in enumerate(business_data):
+         businesses.append(doc["_source"])
+
+    return json_normalize(businesses) 
+
 
 #Gets all the data for the index..default query is match all
 def get_review_data(query="",size=10):
