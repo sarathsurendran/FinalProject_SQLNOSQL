@@ -1,0 +1,66 @@
+{
+			"properties": {
+				"business_id": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword",
+							"ignore_above": 256
+						}
+					}
+				},
+				"cool": {
+					"type": "long"
+				},
+				"date": {
+					"type": "date",
+					"format": "dd-MM-yyyy HH:mm:ss"
+				},
+				"funny": {
+					"type": "long"
+				},
+				"review_id": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword",
+							"ignore_above": 256
+						}
+					}
+				},
+				"stars": {
+					"type": "float"
+				},
+				"text": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword",
+							"ignore_above": 256
+						}
+					}
+				},
+				"type": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword",
+							"ignore_above": 256
+						}
+					}
+				},
+				"useful": {
+					"type": "long"
+				},
+				"user_id": {
+					"type": "text",
+					"fields": {
+						"keyword": {
+							"type": "keyword",
+							"ignore_above": 256
+						}
+					}
+				}
+			}
+
+}
