@@ -14,6 +14,7 @@ import matplotlib.pyplot as plot
 from wordcloud import WordCloud
 from elasticsearch import Elasticsearch
 
+
 es = Elasticsearch(
         ['10.134.175.251'],
         port=9200
@@ -161,7 +162,7 @@ def main():
     
     # Prepare df for reviews from the data collected from businesses
     df_review=load_review_data_from_business(df_business['business_id'])
-    df_review['length_of_text'] = df_review['text'].apply(len)
+    df_review['review_length'] = df_review['text'].apply(len)
 #    
 #   
 #    #group by usefull reviews
@@ -184,10 +185,13 @@ def main():
     plot.ylabel('Count')
     plot.xlabel('Funny reviews')
 #    
-#    stars_grp = df_review.groupby('stars').mean()
-#    print(stars_grp.corr())
-#    
-#    sns.heatmap(stars_grp.corr(),cmap='coolwarm',annot=True)
+    stars_grp = df_review.groupby('stars').mean()
+    hm_fig=plot.figure(figsize=(10,5))
+    ax1 = hm_fig.add_axes([0.4,0.2,0.5,0.6])
+    ax=sns.heatmap(stars_grp.corr(),ax=ax1,cmap="YlGnBu",annot=True,center=0)
+    hm_fig.subplots_adjust(left=0.4)
+    bottom, top = ax.get_ylim()
+    ax.set_ylim(bottom + 0.5, top - 0.5)
     #Concatenate all reviews into one
     cloud_text=df_review.text.str.cat(sep=' ')
     #use it in wordcloud and see what pops out
